@@ -1,0 +1,25 @@
+name: Daily Commit with Timestamp
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Every day at 6 AM UTC
+  workflow_dispatch:  # Optional: allow manual trigger
+
+jobs:
+  update-file:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repo
+      uses: actions/checkout@v3
+
+    - name: Update README with timestamp
+      run: |
+        echo "Updating timestamp..."
+        TIMESTAMP=$(date -u)
+        sed -i "s|_Last updated: .*_|_Last updated: $TIMESTAMP_|" README.md
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+        git add README.md
+        git commit -m "🤖 Auto update: $TIMESTAMP"
+        git push
